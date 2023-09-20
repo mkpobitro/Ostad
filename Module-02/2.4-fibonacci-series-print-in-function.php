@@ -15,3 +15,21 @@ function fibonacci($n)
     }
 }
 fibonacci(15);
+
+echo "\n";
+
+// Alternative way starting with 0, 1...
+function fibonaccii($n)
+{
+    $first = 0;
+    $second = 1;
+
+    for ($i = 0; $i < $n; $i++) {
+        echo "$first, ";
+        $next = $first + $second;
+        $first = $second;
+        $second = $next;
+    }
+}
+
+fibonaccii(15);

@@ -16,3 +16,24 @@ for ($i = 3; $i <= $count; $i++) {
     }
     echo ", $next ";
 }
+
+echo "\n";
+
+
+// ALternative way starting with 0, 1......
+function fibonacci($n)
+{
+    $first = 0;
+    $second = 1;
+
+    for ($i = 0; $i < $n; $i++) {
+        echo "$first, ";
+        $next = $first + $second;
+        $first = $second;
+        $second = $next;
+        if ($next > 100)
+            break;
+    }
+}
+
+fibonacci(10);
