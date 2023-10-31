@@ -21,6 +21,5 @@ function generatePassword($length) {
 
 $password = generatePassword(12);
 
-
 echo "Generat password: $password";
 ?>
