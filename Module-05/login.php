@@ -1,39 +1,59 @@
+<?php include_once './templates/header.php'; ?>
 <?php
-// login.php
-require_once 'config.php';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-
-    // Validate user credentials from the file
-    $users = file(USERS_FILE);
-    foreach ($users as $user) {
-        list($storedEmail, $storedPassword) = explode(',', trim($user));
-        if ($email === $storedEmail && password_verify($password, $storedPassword)) {
-            $_SESSION['email'] = $email;
-            $role = isAdmin($email) ? 'admin' : 'user';
-            redirectToDashboard($role);
-            exit();
-        }
-    }
-
-    // Authentication failed, show an error message
+if (isset($_SESSION['user_id'])) {
+    header('location: index.php');
 }
 
-// HTML form for user login
+$data_file = "users.txt";
+
+$errMsg = '';
+
+$email = $_POST['email'] ?? '';
+$password = $_POST['password'] ?? '';
+
+$users = file($data_file, FILE_IGNORE_NEW_LINES);
+
+if (isset($_POST['submit'])) {
+    foreach ($users as $user) {
+        list($uname, $uemail, $upassword, $urole) = explode(',', $user);
+        if ($uemail == $email && $upassword == $password) {
+            $_SESSION['username'] = $uname;
+            $_SESSION['email'] = $uemail;
+            $_SESSION['role'] = $urole;
+
+            // Redirect based on role
+            if ($urole == "admin") {
+                header("Location: admin_dashboard.php");
+                exit;
+            } elseif ($urole == "manager") {
+                header("Location: manager_dashboard.php");
+                exit;
+            } elseif ($urole == "user") {
+                header("Location: user_dashboard.php");
+                exit;
+            }
+        } else {
+            $errMsg = "Invalid credentials!";
+        }
+    }
+}
+
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Login</title>
-</head>
-<body>
-    <h1>Login</h1>
-    <form method="post">
-        Email: <input type="email" name="email" required><br>
-        Password: <input type="password" name="password" required><br>
-        <button type="submit">Login</button>
-    </form>
-</body>
-</html>
+<div class="container py-3">
+    <div class="row">
+        <div class="col-md-12">
+            <form action="login.php" method="post">
+                Email: <input type="email" name="email" required><br>
+                Password: <input type="password" name="password" required><br>
+                <input type="submit" name="submit" value="Login">
+            </form>
+            <p class="text-danger">
+                <?php echo $errMsg; ?>
+            </p>
+
+        </div>
+    </div>
+</div>
+
+
+<?php include_once './templates/footer.php'; ?>
